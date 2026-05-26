@@ -1,9 +1,10 @@
 #define INCL_WINWINDOWMGR
+#define INCL_DOSPROCESS
 #include <os2.h>
 
 #include <malloc.h>
 
-USHORT  PlaceDialogButtons
+USHORT  _System PlaceDialogButtons
 (
     HAB     hab,                /* Anchor block handle  */
     HWND    hwndDlg,            /* Dialog window handle */
@@ -152,7 +153,7 @@ USHORT  PlaceDialogButtons
         i < cButtons; ++i )
     {
         aswpButtons[i].x   = xCurrentButton;
-        aswpButtons[i].fs  = SWP_MOVE;
+        aswpButtons[i].fl  = SWP_MOVE;
         xCurrentButton    += (aswpButtons[i].cx + cxButtonMargin);
     }
 
@@ -171,4 +172,27 @@ USHORT  PlaceDialogButtons
     free (aswpButtons);
 
     return 0;
+}
+
+/* Required EMX/GCC DLL Entry/Exit Point */
+
+/* Prototypes for EMX C Runtime Init/Term */
+int _CRT_init(void);
+void _CRT_term(void);
+
+unsigned long _System _DLL_InitTerm(unsigned long hModule, unsigned long ulFlag)
+{
+    switch (ulFlag)
+    {
+        case 0: /* DLL Initialization */
+            if (_CRT_init() != 0) {
+                return 0; /* Failed to initialize C runtime */
+            }
+            return 1;     /* Success */
+
+        case 1: /* DLL Termination */
+            _CRT_term();
+            return 1;     /* Success */
+    }
+    return 0;             /* Fail on unknown flags */
 }

@@ -1,0 +1,2 @@
+gcc -Wall -Zomf -Zdll -c -O2 btnplc.c -o btnplc.obj
+gcc -Zomf -Zdll btnplc.obj btnplc.def -o btnplc.dll
